@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Grammar Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:1rem;}
+.container{max-width:680px;margin:0 auto;}
+
+/* HEADER */
+.header{text-align:center;padding:1.2rem 0 1rem;}
+.header h1{font-size:26px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.header p{font-size:13px;color:rgba(255,255,255,0.8);margin-top:4px;}
+
+/* TABS */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:1rem;}
+.tab{padding:8px 18px;border-radius:50px;border:2px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;font-size:13px;font-weight:700;transition:all 0.2s;backdrop-filter:blur(8px);}
+.tab.active{background:#fff;color:#764ba2;border-color:#fff;}
+.tab:hover:not(.active){background:rgba(255,255,255,0.25);}
+
+/* CARD */
+.card{background:#fff;border-radius:24px;padding:1.75rem;box-shadow:0 20px 60px rgba(0,0,0,0.15);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:linear-gradient(135deg,#f093fb,#f5576c);border-radius:50%;opacity:0.1;}
+
+/* STREAK */
+.streak-bar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:10px 14px;background:linear-gradient(135deg,#fff9c4,#fff3cd);border-radius:14px;border:2px solid #ffd700;}
+.streak-flames{display:flex;gap:4px;}
+.flame{font-size:18px;transition:all 0.3s;}
+.flame.active{animation:flamePulse 0.5s ease;}
+@keyframes flamePulse{0%{transform:scale(1);}50%{transform:scale(1.4);}100%{transform:scale(1);}}
+.streak-text{font-size:13px;font-weight:700;color:#d97706;}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:10px;margin-bottom:1.25rem;}
+.stat-box{flex:1;text-align:center;padding:10px 8px;border-radius:14px;border:2px solid;}
+.stat-box.coins{background:#fff9c4;border-color:#ffd700;}
+.stat-box.correct{background:#f0fdf4;border-color:#22c55e;}
+.stat-box.wrong{background:#fef2f2;border-color:#ef4444;}
+.stat-num{font-size:20px;font-weight:900;}
+.stat-label{font-size:11px;font-weight:700;color:#888;margin-top:2px;}
+.coins .stat-num{color:#d97706;}
+.correct .stat-num{color:#166534;}
+.wrong .stat-num{color:#991b1b;}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:1.25rem;}
+.progress-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#888;margin-bottom:6px;}
+.progress-track{background:#f0efe8;border-radius:100px;height:10px;overflow:hidden;}
+.progress-fill{height:10px;border-radius:100px;background:linear-gradient(90deg,#667eea,#764ba2);transition:width 0.4s;position:relative;}
+.progress-fill::after{content:'';position:absolute;right:0;top:0;width:10px;height:10px;background:rgba(255,255,255,0.5);border-radius:50%;}
+
+/* QUESTION */
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.q-num{font-size:13px;color:#aaa;font-weight:700;}
+.q-badge{font-size:11px;padding:4px 12px;border-radius:100px;font-weight:800;}
+.badge-mc{background:#eff6ff;color:#1d4ed8;}
+.badge-fill{background:#f0fdf4;color:#166534;}
+.q-text{font-size:17px;font-weight:800;color:#1a1a18;margin-bottom:1.25rem;line-height:1.55;}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:8px;}
+.opt-btn{text-align:left;padding:13px 18px;border-radius:14px;border:2.5px solid #e5e4dc;background:#fafaf8;color:#1a1a18;cursor:pointer;font-size:15px;font-weight:700;transition:all 0.15s;display:flex;align-items:center;gap:12px;}
+.opt-letter{width:28px;height:28px;border-radius:50%;background:#e5e4dc;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;transition:all 0.15s;}
+.opt-btn:hover:not(:disabled){border-color:#667eea;background:#f0f0ff;transform:translateX(4px);}
+.opt-btn:hover:not(:disabled) .opt-letter{background:#667eea;color:#fff;}
+.opt-btn.correct{background:#f0fdf4;border-color:#22c55e;animation:correctPop 0.4s ease;}
+.opt-btn.correct .opt-letter{background:#22c55e;color:#fff;}
+.opt-btn.wrong{background:#fef2f2;border-color:#ef4444;}
+.opt-btn.wrong .opt-letter{background:#ef4444;color:#fff;}
+@keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.03);}100%{transform:scale(1);}}
+
+/* FILL */
+.fill-input{width:100%;padding:13px 16px;border-radius:14px;border:2.5px solid #e5e4dc;background:#fafaf8;color:#1a1a18;font-size:15px;font-weight:700;font-family:'Nunito',sans-serif;margin-bottom:10px;outline:none;transition:border-color 0.2s;}
+.fill-input:focus{border-color:#667eea;}
+.fill-input.correct{border-color:#22c55e;background:#f0fdf4;color:#166534;}
+.fill-input.wrong{border-color:#ef4444;background:#fef2f2;color:#991b1b;}
+.check-btn{padding:12px 24px;border-radius:14px;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;transition:all 0.15s;box-shadow:0 4px 12px rgba(102,126,234,0.4);}
+.check-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(102,126,234,0.5);}
+
+/* FEEDBACK */
+.feedback{margin-top:12px;padding:12px 16px;border-radius:14px;font-size:14px;font-weight:700;}
+.feedback.ok{background:#f0fdf4;color:#166534;border:2px solid #bbf7d0;}
+.feedback.err{background:#fef2f2;color:#991b1b;border:2px solid #fecaca;}
+
+/* NAV */
+.nav-row{display:flex;justify-content:flex-end;margin-top:1.5rem;}
+.next-btn{padding:12px 28px;border-radius:14px;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;font-size:15px;font-weight:800;font-family:'Nunito',sans-serif;transition:all 0.2s;box-shadow:0 4px 12px rgba(102,126,234,0.4);}
+.next-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(102,126,234,0.5);}
+.next-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* SCORE SCREEN */
+.score-box{text-align:center;padding:1.5rem 0.5rem;}
+.score-trophy{font-size:64px;margin-bottom:8px;animation:trophyBounce 1s ease;}
+@keyframes trophyBounce{0%{transform:scale(0);}60%{transform:scale(1.2);}100%{transform:scale(1);}}
+.score-big{font-size:52px;font-weight:900;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.score-msg{font-size:16px;color:#555;font-weight:700;margin:4px 0 1.5rem;}
+.score-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+.pill{padding:8px 20px;border-radius:100px;font-size:14px;font-weight:800;}
+.pill-ok{background:#f0fdf4;color:#166534;border:2px solid #bbf7d0;}
+.pill-err{background:#fef2f2;color:#991b1b;border:2px solid #fecaca;}
+.pill-coin{background:#fff9c4;color:#d97706;border:2px solid #ffd700;}
+.divider{height:2px;background:linear-gradient(90deg,transparent,#e5e4dc,transparent);margin:1.5rem 0;}
+.restart-btn{padding:13px 30px;border-radius:14px;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;font-size:15px;font-weight:800;font-family:'Nunito',sans-serif;margin:4px;box-shadow:0 4px 12px rgba(102,126,234,0.4);transition:all 0.2s;}
+.restart-btn:hover{transform:translateY(-2px);}
+.restart-btn.ghost{background:#f5f5f0;color:#555;box-shadow:none;border:2px solid #e5e4dc;}
+
+/* WRONG TABLE */
+.wrong-title{font-size:14px;font-weight:800;color:#555;margin-bottom:10px;text-align:left;}
+.detail-table{width:100%;border-collapse:collapse;font-size:13px;text-align:left;}
+.detail-table th{background:#f5f5f0;padding:8px 10px;color:#555;font-weight:800;border:1.5px solid #e5e4dc;}
+.detail-table td{padding:8px 10px;border:1.5px solid #e5e4dc;}
+.detail-table tr.err-row td{background:#fef2f2;}
+
+/* NAME SCREEN */
+.name-screen{text-align:center;padding:0.5rem 0;}
+.name-screen h2{font-size:22px;font-weight:900;color:#1a1a18;margin-bottom:8px;}
+.name-screen p{font-size:14px;color:#888;font-weight:600;margin-bottom:1.5rem;}
+.name-input{width:100%;padding:14px 18px;border-radius:14px;border:2.5px solid #e5e4dc;font-size:16px;font-weight:700;font-family:'Nunito',sans-serif;color:#1a1a18;outline:none;margin-bottom:12px;transition:border-color 0.2s;}
+.name-input:focus{border-color:#667eea;}
+.topic-pick{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;}
+.topic-radio{cursor:pointer;padding:8px 16px;border-radius:50px;border:2.5px solid #e5e4dc;font-size:13px;font-weight:800;color:#555;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+.topic-radio input{display:none;}
+.topic-radio.selected{border-color:#667eea;background:#eff6ff;color:#3b4fd8;}
+.start-btn{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;box-shadow:0 4px 16px rgba(102,126,234,0.5);transition:all 0.2s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(102,126,234,0.6);}
+
+/* CELEBRATE */
+.celebrate{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall linear forwards;}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+
+/* STREAK POPUP */
+.streak-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:24px 40px;border-radius:24px;text-align:center;z-index:1000;animation:popupShow 2.5s ease forwards;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+@keyframes popupShow{0%{transform:translate(-50%,-50%) scale(0);}20%{transform:translate(-50%,-50%) scale(1.1);}30%{transform:translate(-50%,-50%) scale(1);}80%{transform:translate(-50%,-50%) scale(1);opacity:1;}100%{transform:translate(-50%,-50%) scale(0.8);opacity:0;}}
+.streak-popup h2{font-size:28px;font-weight:900;margin-bottom:8px;}
+.streak-popup p{font-size:15px;opacity:0.9;}
+
+/* TG STATUS */
+.tg-status{font-size:13px;font-weight:700;margin-top:12px;padding:10px;border-radius:10px;background:#f0f0ff;color:#667eea;}
+
+/* LEADERBOARD */
+.lb-title{font-size:16px;font-weight:900;color:#1a1a18;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;margin-bottom:6px;border:2px solid #e5e4dc;background:#fafaf8;}
+.lb-rank{font-size:18px;width:28px;text-align:center;}
+.lb-name{flex:1;font-size:14px;font-weight:800;color:#1a1a18;}
+.lb-score{font-size:14px;font-weight:900;color:#d97706;}
+.lb-row.gold{background:#fff9c4;border-color:#ffd700;}
+.lb-row.silver{background:#f5f5f5;border-color:#aaa;}
+.lb-row.bronze{background:#fef3ec;border-color:#cd7f32;}
+
+/* FOOTER */
+.footer{text-align:center;margin-top:1.5rem;padding-bottom:1rem;}
+.footer p{font-size:12px;color:rgba(255,255,255,0.7);font-weight:600;}
+.footer span{color:#ffd700;font-weight:800;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🎓 English Grammar Quiz</h1>
+    <p>A1/A2 → B1 · 13–16 yosh</p>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="card" id="main-card"></div>
+  <div class="footer">
+    <p>Yaratuvchi: <span>Anvarov Hamidulla</span> 👨‍💻</p>
+  </div>
+</div>
+
+<script>
+const BOT_TOKEN = "8866918968:AAHLORU8ZpntGWUnvhMuGduVxAi5M5oAxvc";
+const CHAT_ID = "5439306686";
+
+const ALL = {
+  "Present Simple": [
+    {type:"mc",q:"She ___ to school every day.",opts:["go","goes","going","gone"],ans:1},
+    {type:"fill",q:"They ___ (play) football on weekends.",ans:"play"},
+    {type:"mc",q:"He ___ not like coffee.",opts:["do","does","is","are"],ans:1},
+    {type:"fill",q:"My brother ___ (work) in a hospital.",ans:"works"},
+    {type:"mc",q:"Do they ___ English at school?",opts:["study","studies","studying","studied"],ans:0},
+    {type:"fill",q:"Water ___ (boil) at 100°C.",ans:"boils"},
+    {type:"mc",q:"Which sentence is correct?",opts:["He don't like pizza.","He doesn't likes pizza.","He doesn't like pizza.","He isn't like pizza."],ans:2},
+    {type:"fill",q:"The sun ___ (rise) in the east.",ans:"rises"},
+    {type:"mc",q:"___ she speak French?",opts:["Do","Does","Is","Are"],ans:1},
+    {type:"fill",q:"I ___ (not / eat) meat.",ans:"don't eat"},
+    {type:"mc",q:"They ___ football every Saturday.",opts:["plays","play","playing","played"],ans:1},
+    {type:"fill",q:"He ___ (watch) TV in the evenings.",ans:"watches"},
+    {type:"mc",q:"My parents ___ in London.",opts:["lives","living","live","lived"],ans:2},
+    {type:"fill",q:"She ___ (not / know) the answer.",ans:"doesn't know"},
+    {type:"mc",q:"___ your sister work at a hospital?",opts:["Do","Does","Is","Are"],ans:1},
+    {type:"fill",q:"The dogs ___ (bark) at night.",ans:"bark"},
+    {type:"mc",q:"He always ___ his homework.",opts:["do","does","doing","done"],ans:1},
+    {type:"fill",q:"We ___ (not / go) to school on Sundays.",ans:"don't go"},
+    {type:"mc",q:"Which question is correct?",opts:["Does she likes him?","Do she like him?","Does she like him?","Is she like him?"],ans:2},
+    {type:"fill",q:"She ___ (teach) English at our school.",ans:"teaches"},
+  ],
+  "Past Simple": [
+    {type:"mc",q:"She ___ to the market yesterday.",opts:["go","goes","went","gone"],ans:2},
+    {type:"fill",q:"They ___ (watch) a movie last night.",ans:"watched"},
+    {type:"mc",q:"He ___ not come to school last Monday.",opts:["do","does","did","was"],ans:2},
+    {type:"fill",q:"I ___ (see) her at the park.",ans:"saw"},
+    {type:"mc",q:"We ___ football yesterday afternoon.",opts:["play","plays","played","playing"],ans:2},
+    {type:"fill",q:"She ___ (write) a letter to her friend.",ans:"wrote"},
+    {type:"mc",q:"___ you finish your homework?",opts:["Do","Does","Did","Was"],ans:2},
+    {type:"fill",q:"He ___ (buy) a new phone last week.",ans:"bought"},
+    {type:"mc",q:"They ___ at home all day.",opts:["stay","stays","stayed","staying"],ans:2},
+    {type:"fill",q:"We ___ (not / have) breakfast this morning.",ans:"didn't have"},
+    {type:"mc",q:"She ___ very happy when she heard the news.",opts:["is","was","were","be"],ans:1},
+    {type:"fill",q:"He ___ (run) very fast in the race.",ans:"ran"},
+    {type:"mc",q:"Which sentence is correct?",opts:["She didn't went home.","She didn't go home.","She didn't goes home.","She wasn't go home."],ans:1},
+    {type:"fill",q:"They ___ (arrive) late to the party.",ans:"arrived"},
+    {type:"mc",q:"When ___ you last visit your grandparents?",opts:["do","does","did","were"],ans:2},
+    {type:"fill",q:"I ___ (feel) very tired after school.",ans:"felt"},
+    {type:"mc",q:"He ___ his keys at home this morning.",opts:["forget","forgot","forgets","forgetting"],ans:1},
+    {type:"fill",q:"She ___ (not / like) the food at the restaurant.",ans:"didn't like"},
+    {type:"mc",q:"They ___ a lot of fun at the party.",opts:["have","has","had","having"],ans:2},
+    {type:"fill",q:"We ___ (meet) our teacher in the street.",ans:"met"},
+  ],
+  "Pronouns": [
+    {type:"mc",q:"___ is my best friend. (girl)",opts:["He","She","They","It"],ans:1},
+    {type:"fill",q:"That book belongs to me. It is ___ book.",ans:"my"},
+    {type:"mc",q:"Give the bag to ___.",opts:["I","me","my","mine"],ans:1},
+    {type:"fill",q:"This pen is not yours. It is ___. (belonging to me)",ans:"mine"},
+    {type:"mc",q:"___ are my parents. They are kind.",opts:["This","That","These","Those"],ans:2},
+    {type:"fill",q:"She loves ___ cat very much. (belonging to her)",ans:"her"},
+    {type:"mc",q:"The dog bit ___.",opts:["he","him","his","himself"],ans:1},
+    {type:"fill",q:"We did ___ homework on time.",ans:"our"},
+    {type:"mc",q:"Is this bag yours or ___? (belonging to them)",opts:["they","their","them","theirs"],ans:3},
+    {type:"fill",q:"He cut ___ while cooking.",ans:"himself"},
+    {type:"mc",q:"___ car is very fast. (belonging to us)",opts:["We","Us","Our","Ours"],ans:2},
+    {type:"fill",q:"The children enjoyed ___.",ans:"themselves"},
+    {type:"mc",q:"She made the cake ___.",opts:["herself","hers","her","she"],ans:0},
+    {type:"fill",q:"That is not my phone. ___ is over there.",ans:"mine"},
+    {type:"mc",q:"I can do it ___.",opts:["me","my","myself","mine"],ans:2},
+    {type:"fill",q:"___ is raining today.",ans:"It"},
+    {type:"mc",q:"Look at ___ — she is amazing! (object pronoun)",opts:["she","her","hers","herself"],ans:1},
+    {type:"fill",q:"They enjoyed ___ at the party.",ans:"themselves"},
+    {type:"mc",q:"This is Tom's book. It's ___.",opts:["he","him","his","himself"],ans:2},
+    {type:"fill",q:"Can you help ___?",ans:"us"},
+  ]
+};
+
+const TOPICS = Object.keys(ALL);
+const COIN_PER_CORRECT = 10;
+const STREAK_BONUS = 50;
+
+let topic=TOPICS[0], questions=[], cur=0, score=0, coins=0, answered=false, userInput="", finished=false;
+let streak=0, maxStreak=0, results=[];
+let studentName="";
+// Leaderboard stored in memory
+let leaderboard = JSON.parse(localStorage.getItem("quiz_lb")||"[]");
+
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+/* ---------- NAME SCREEN ---------- */
+function showNameScreen(){
+  document.getElementById("tabs").innerHTML="";
+  document.getElementById("main-card").innerHTML=`
+    <div class="name-screen">
+      <div style="font-size:52px;margin-bottom:8px">📝</div>
+      <h2>Ismingizni kiriting</h2>
+      <p>Test boshlanishidan oldin to'liq ismingizni yozing</p>
+      <input class="name-input" id="name-inp" type="text" placeholder="Masalan: Alibek Karimov" autocomplete="off" onkeydown="if(event.key==='Enter')beginQuiz()"/>
+      <div style="margin-bottom:16px;text-align:left">
+        <p style="font-size:13px;font-weight:800;color:#555;margin-bottom:8px">Mavzuni tanlang:</p>
+        <div class="topic-pick" id="topic-pick">
+          ${TOPICS.map((t,i)=>`<label class="topic-radio${i===0?' selected':''}" id="tr${i}">
+            <input type="radio" name="tp" value="${t}" ${i===0?'checked':''} onchange="selectTopic('${t}',${i})"> ${t}
+          </label>`).join("")}
+        </div>
+      </div>
+      <button class="start-btn" onclick="beginQuiz()">🚀 Testni boshlash</button>
+      <div style="margin-top:1.5rem">${renderLeaderboard(true)}</div>
+    </div>`;
+  setTimeout(()=>{const e=document.getElementById("name-inp");if(e)e.focus();},100);
+}
+
+function selectTopic(t,idx){
+  topic=t;
+  document.querySelectorAll(".topic-radio").forEach((el,i)=>{
+    el.classList.toggle("selected",i===idx);
+  });
+}
+
+function renderLeaderboard(mini=false){
+  if(leaderboard.length===0) return "";
+  const sorted=[...leaderboard].sort((a,b)=>b.coins-a.coins).slice(0,5);
+  const medals=["🥇","🥈","🥉","4️⃣","5️⃣"];
+  const cls=["gold","silver","bronze","",""];
+  let html=`<div class="lb-title">🏆 Top O'quvchilar</div>`;
+  sorted.forEach((s,i)=>{
+    html+=`<div class="lb-row ${cls[i]||''}">
+      <span class="lb-rank">${medals[i]||i+1}</span>
+      <span class="lb-name">${s.name}</span>
+      <span class="lb-score">🪙 ${s.coins}</span>
+    </div>`;
+  });
+  return html;
+}
+
+function beginQuiz(){
+  const val=document.getElementById("name-inp").value.trim();
+  if(!val){document.getElementById("name-inp").style.borderColor="#ef4444";return;}
+  studentName=val;
+  questions=shuffle(ALL[topic]).slice(0,20);
+  cur=0;score=0;coins=0;answered=false;userInput="";finished=false;streak=0;maxStreak=0;results=[];
+  rebuildCard();render();
+}
+
+function rebuildCard(){
+  document.getElementById("main-card").innerHTML=`
+    <div id="streak-bar" class="streak-bar">
+      <div class="streak-flames" id="flames"></div>
+      <span class="streak-text" id="streak-txt">Ketma-ket to'g'ri javob bering! 🎯</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box coins"><div class="stat-num" id="stat-coins">0</div><div class="stat-label">🪙 Ball</div></div>
+      <div class="stat-box correct"><div class="stat-num" id="stat-ok">0</div><div class="stat-label">✅ To'g'ri</div></div>
+      <div class="stat-box wrong"><div class="stat-num" id="stat-err">0</div><div class="stat-label">❌ Xato</div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-top"><span id="prog-label">1 / 20</span><span id="prog-pct">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+    </div>
+    <div id="quiz-area"></div>`;
+  renderTabs();
+  updateStreak();
+}
+
+function renderTabs(){
+  document.getElementById("tabs").innerHTML=TOPICS.map(t=>
+    `<div class="tab${t===topic?' active':''}">${t}</div>`
+  ).join("");
+}
+
+function updateStats(){
+  const ok=results.filter(r=>r.isOk).length;
+  const err=results.filter(r=>!r.isOk).length;
+  const el1=document.getElementById("stat-coins");if(el1)el1.textContent=coins;
+  const el2=document.getElementById("stat-ok");if(el2)el2.textContent=ok;
+  const el3=document.getElementById("stat-err");if(el3)el3.textContent=err;
+}
+
+function updateStreak(){
+  const el=document.getElementById("flames");
+  const txt=document.getElementById("streak-txt");
+  if(!el||!txt) return;
+  let html="";
+  for(let i=0;i<5;i++) html+=`<span class="flame${i<streak?' active':''}">${i<streak?'🔥':'⬜'}</span>`;
+  el.innerHTML=html;
+  if(streak===0) txt.textContent="Ketma-ket to'g'ri javob bering! 🎯";
+  else if(streak<5) txt.textContent=`${streak} ta ketma-ket! ${5-streak} ta qoldi 🔥`;
+  else txt.textContent=`🔥 ${streak} ta ketma-ket! Zo'r!`;
+}
+
+function updateProgress(){
+  const pct=finished?100:Math.round((cur/questions.length)*100);
+  const pf=document.getElementById("progress");if(pf)pf.style.width=pct+"%";
+  const pl=document.getElementById("prog-label");if(pl)pl.textContent=(finished?"Tugadi":(cur+1))+" / "+questions.length;
+  const pp=document.getElementById("prog-pct");if(pp)pp.textContent=pct+"%";
+}
+
+function render(){
+  updateProgress();
+  if(finished){renderScore();return;}
+  const q=questions[cur];answered=false;userInput="";
+  const badge=q.type==="mc"?'<span class="q-badge badge-mc">🔤 Test</span>':'<span class="q-badge badge-fill">✏️ To\'ldiring</span>';
+  let body="";
+  if(q.type==="mc"){
+    body=`<div class="options">`+q.opts.map((o,i)=>
+      `<button class="opt-btn" id="o${i}" onclick="checkMC(${i})">
+        <span class="opt-letter">${["A","B","C","D"][i]}</span>${o}
+      </button>`
+    ).join("")+`</div>`;
+  } else {
+    body=`<input class="fill-input" id="fi" type="text" placeholder="Javobingizni yozing..." oninput="userInput=this.value" onkeydown="if(event.key==='Enter')checkFill()" autocomplete="off"/>
+    <button class="check-btn" onclick="checkFill()">✓ Tekshirish</button>`;
+  }
+  document.getElementById("quiz-area").innerHTML=`
+    <div class="q-meta"><span class="q-num">Savol ${cur+1}</span>${badge}</div>
+    <div class="q-text">${q.q}</div>
+    <div id="qb">${body}</div>
+    <div id="fb"></div>
+    <div class="nav-row">
+      <button class="next-btn" id="next-btn" onclick="next()" disabled>${cur===questions.length-1?"🏁 Tugat":"Keyingi →"}</button>
+    </div>`;
+  if(q.type!=="mc") setTimeout(()=>{const e=document.getElementById("fi");if(e)e.focus();},50);
+}
+
+function enableNext(){
+  const nb=document.getElementById("next-btn");
+  if(nb){nb.disabled=false;}
+}
+
+function checkMC(i){
+  if(answered)return;answered=true;
+  const q=questions[cur],c=q.ans;
+  document.querySelectorAll(".opt-btn").forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===c)b.classList.add("correct");
+    else if(idx===i&&i!==c)b.classList.add("wrong");
+  });
+  const ok=i===c;
+  processAnswer(ok,q.opts[c],q.opts[i]||"");
+}
+
+function checkFill(){
+  if(answered)return;answered=true;
+  const q=questions[cur];
+  const val=userInput.trim().toLowerCase();
+  const ok=val===q.ans.toLowerCase();
+  const el=document.getElementById("fi");
+  if(el){el.disabled=true;el.classList.add(ok?"correct":"wrong");}
+  processAnswer(ok,q.ans,userInput.trim()||"(bo'sh)");
+}
+
+function processAnswer(ok,correct,userAns){
+  results.push({q:questions[cur].q,correct,userAns,isOk:ok});
+  if(ok){
+    score++;
+    streak++;
+    if(streak>maxStreak)maxStreak=streak;
+    coins+=COIN_PER_CORRECT;
+    if(streak%5===0){
+      coins+=STREAK_BONUS;
+      showStreakPopup(streak);
+    }
+  } else {
+    streak=0;
+  }
+  updateStreak();
+  updateStats();
+  showFB(ok,correct);
+  enableNext();
+}
+
+function showFB(ok,correct){
+  const fb=document.getElementById("fb");
+  if(fb) fb.innerHTML=ok
+    ?`<div class="feedback ok">🎉 To'g'ri! +${COIN_PER_CORRECT} 🪙</div>`
+    :`<div class="feedback err">❌ Noto'g'ri. To'g'ri javob: <strong>${correct}</strong></div>`;
+}
+
+function showStreakPopup(n){
+  const div=document.createElement("div");
+  div.className="streak-popup";
+  div.innerHTML=`<h2>🔥 ${n} KETMA-KET!</h2><p>Ajoyib! +${STREAK_BONUS} 🪙 bonus!</p>`;
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(),2600);
+  confetti();
+}
+
+function confetti(){
+  const colors=["#f093fb","#f5576c","#4facfe","#43e97b","#ffd700","#764ba2"];
+  const cel=document.createElement("div");
+  cel.className="celebrate";
+  for(let i=0;i<60;i++){
+    const p=document.createElement("div");
+    p.className="confetti-piece";
+    p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    cel.appendChild(p);
+  }
+  document.body.appendChild(cel);
+  setTimeout(()=>cel.remove(),3000);
+}
+
+function next(){
+  if(!answered){
+    const q=questions[cur];
+    if(q.type==="mc"){
+      document.querySelectorAll(".opt-btn").forEach((b,i)=>{b.disabled=true;if(i===q.ans)b.classList.add("correct");});
+    } else {
+      const el=document.getElementById("fi");if(el){el.disabled=true;el.classList.add("wrong");}
+    }
+    processAnswer(false,q.ans||q.opts[q.ans],"(javob berilmadi)");
+    setTimeout(()=>advance(),600);
+  } else {advance();}
+}
+
+function advance(){
+  if(cur<questions.length-1){cur++;render();}
+  else{finished=true;render();}
+}
+
+async function sendToTelegram(msg){
+  const url=`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  try{
+    await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:CHAT_ID,text:msg,parse_mode:"HTML"})});
+  }catch(e){console.error(e);}
+}
+
+function saveLeaderboard(){
+  const existing=leaderboard.findIndex(l=>l.name.toLowerCase()===studentName.toLowerCase());
+  if(existing>=0){
+    if(coins>leaderboard[existing].coins) leaderboard[existing].coins=coins;
+  } else {
+    leaderboard.push({name:studentName,coins});
+  }
+  leaderboard.sort((a,b)=>b.coins-a.coins);
+  try{localStorage.setItem("quiz_lb",JSON.stringify(leaderboard));}catch(e){}
+}
+
+function renderScore(){
+  const pct=Math.round(score/questions.length*100);
+  const emoji=pct>=90?"🏆":pct>=70?"🥇":pct>=50?"👍":"📚";
+  const msg=pct>=90?"Mukammal natija!":pct>=70?"Ajoyib!":pct>=50?"Yaxshi, yana mashq qiling!":"Ko'proq o'qish kerak!";
+
+  saveLeaderboard();
+  if(pct>=80) confetti();
+
+  const wrongs=results.filter(r=>!r.isOk);
+  let wrongRows=wrongs.map((r,i)=>`<tr class="err-row"><td>${i+1}</td><td>${r.q}</td><td style="color:#991b1b">${r.userAns}</td><td style="color:#166534">${r.correct}</td></tr>`).join("");
+  let tableHtml=wrongs.length===0
+    ?`<p style="color:#166534;font-size:14px;font-weight:700;margin-top:1rem">🌟 Barcha savollar to'g'ri!</p>`
+    :`<div class="wrong-title">❌ Xato javoblar:</div><table class="detail-table"><thead><tr><th>#</th><th>Savol</th><th>Javob</th><th>To'g'ri</th></tr></thead><tbody>${wrongRows}</tbody></table>`;
+
+  document.getElementById("quiz-area").innerHTML=`
+    <div class="score-box">
+      <div class="score-trophy">${emoji}</div>
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="score-msg">${msg} — ${pct}%</div>
+      <div class="score-pills">
+        <span class="pill pill-ok">✅ To'g'ri: ${score}</span>
+        <span class="pill pill-err">❌ Xato: ${questions.length-score}</span>
+        <span class="pill pill-coin">🪙 Ball: ${coins}</span>
+        ${maxStreak>=5?`<span class="pill" style="background:#fff0fe;color:#a21caf;border:2px solid #e879f9">🔥 Max streak: ${maxStreak}</span>`:""}
+      </div>
+      <div id="tg-status" class="tg-status">📤 Natija o'qituvchiga yuborilmoqda...</div>
+      <div class="divider"></div>
+      ${tableHtml}
+      <div class="divider"></div>
+      <div style="margin-bottom:1rem">${renderLeaderboard()}</div>
+      <button class="restart-btn" onclick="showNameScreen()">🔄 Yangi test</button>
+    </div>`;
+
+  // Build Telegram message
+  const now=new Date();
+  const time=now.toLocaleString("uz-UZ",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit",year:"numeric"});
+  let tgMsg=`📝 <b>Yangi test natijasi</b>\n\n`;
+  tgMsg+=`👤 <b>O'quvchi:</b> ${studentName}\n`;
+  tgMsg+=`📚 <b>Mavzu:</b> ${topic}\n`;
+  tgMsg+=`🕐 <b>Vaqt:</b> ${time}\n`;
+  tgMsg+=`📊 <b>Natija:</b> ${score}/${questions.length} (${pct}%)\n`;
+  tgMsg+=`✅ <b>To'g'ri:</b> ${score}  ❌ <b>Xato:</b> ${questions.length-score}\n`;
+  tgMsg+=`🪙 <b>Ball:</b> ${coins}  🔥 <b>Max streak:</b> ${maxStreak}\n`;
+  if(wrongs.length>0){
+    tgMsg+=`\n❌ <b>Xato javoblar:</b>\n`;
+    wrongs.forEach((r,i)=>{tgMsg+=`${i+1}. ${r.q}\n   Javob: <i>${r.userAns}</i> → To'g'ri: <b>${r.correct}</b>\n`;});
+  } else {
+    tgMsg+=`\n🌟 Barcha savollar to'g'ri javoblandi!`;
+  }
+
+  sendToTelegram(tgMsg).then(()=>{
+    const el=document.getElementById("tg-status");
+    if(el)el.innerHTML=`<span style="color:#166534;font-weight:800">✅ Natija o'qituvchiga yuborildi!</span>`;
+  }).catch(()=>{
+    const el=document.getElementById("tg-status");
+    if(el)el.innerHTML=`<span style="color:#991b1b">⚠️ Yuborishda xatolik</span>`;
+  });
+}
+
+showNameScreen();
+</script>
+</body>
+</html>
